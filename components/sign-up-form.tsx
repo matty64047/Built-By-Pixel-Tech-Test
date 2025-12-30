@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import signUpAction from "@/actions/sign-up";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 export function SignUpForm({
@@ -29,7 +29,6 @@ export function SignUpForm({
 
 	const handleSignUp = async (e: React.FormEvent) => {
 		e.preventDefault();
-		const supabase = createClient();
 		setIsLoading(true);
 		setError(null);
 
@@ -40,13 +39,14 @@ export function SignUpForm({
 		}
 
 		try {
-			const { error } = await supabase.auth.signUp({
-				email,
-				password,
-				options: {
-					emailRedirectTo: `${window.location.origin}/protected`,
-				},
-			});
+			// const { error } = await supabase.auth.signUp({
+			// 	email,
+			// 	password,
+			// 	options: {
+			// 		emailRedirectTo: `${window.location.origin}/protected`,
+			// 	},
+			// });
+			signUpAction();
 			if (error) throw error;
 			router.push("/auth/sign-up-success");
 		} catch (error: unknown) {

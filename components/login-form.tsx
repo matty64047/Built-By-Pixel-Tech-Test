@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { loginAction } from "@/actions/login";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 export function LoginForm({
@@ -26,22 +26,17 @@ export function LoginForm({
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 
-	const handleLogin = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		const supabase = createClient();
 		setIsLoading(true);
 		setError(null);
 
 		try {
-			const { error } = await supabase.auth.signInWithPassword({
-				email,
-				password,
-			});
-			if (error) throw error;
-			// Update this route to redirect to an authenticated route. The user already has an active session.
-			router.push("/protected");
-		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : "An error occurred");
+			await loginAction(email, password);
+			console.log("here");
+			router.push("/");
+		} catch (err: unknown) {
+			setError(err instanceof Error ? err.message : "An error occurred");
 		} finally {
 			setIsLoading(false);
 		}
@@ -57,7 +52,7 @@ export function LoginForm({
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form onSubmit={handleLogin}>
+					<form onSubmit={handleSubmit}>
 						<div className="flex flex-col gap-6">
 							<div className="grid gap-2">
 								<Label htmlFor="email">Email</Label>
