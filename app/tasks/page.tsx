@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getTask } from "@/actions/get-task";
+import { getTask } from "@/actions/get-tasks";
 
 export default function Page() {
 	const searchParams = useSearchParams();

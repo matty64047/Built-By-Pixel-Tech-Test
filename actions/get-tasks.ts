@@ -5,10 +5,13 @@ import {
 	type GetUserTaskListQuery,
 	type GetUserTaskListQueryResult,
 	type GetUserTaskListQueryVariables,
+	TaskGetDocument,
+	TaskGetQuery,
+	TaskGetQueryVariables,
 	TaskListDocument,
 	type TaskListQuery,
 } from "@/graphql/generated";
-import { getApolloClient } from "@/lib/apollo/client";
+import { getApolloClient } from "@/graphql/client";
 import { getUser, type User } from "./get-user";
 import { getUserId } from "./utils";
 
@@ -45,4 +48,19 @@ export async function getTasksAction(): Promise<Tasks> {
 	return {
 		tasks: data?.taskList || [],
 	};
+}
+
+export async function getTask(taskId: string) {
+	const client = await getApolloClient();
+
+	const { data } = await client.query<TaskGetQuery, TaskGetQueryVariables>({
+		query: TaskGetDocument,
+		variables: {
+			filter: {
+				_id: taskId,
+			},
+		},
+	});
+
+	return data?.taskGet;
 }

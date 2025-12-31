@@ -6,7 +6,7 @@ import {
 	type LoginMutation,
 	type LoginMutationVariables,
 } from "@/graphql/generated";
-import { getApolloClient } from "@/lib/apollo/client";
+import { getApolloClient } from "@/graphql/client";
 
 export async function loginAction(
 	email: string,

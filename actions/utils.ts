@@ -25,15 +25,7 @@ export async function setAuthTokenCookie(
 		httpOnly: true,
 		secure: SECURE,
 		sameSite: "lax",
-	});
-
-	(await cookies()).set({
-		name: AUTH_TOKEN_COOKIE_EXPIRY,
-		value: authTokenExpiry,
-		path: "/",
-		httpOnly: true,
-		secure: SECURE,
-		sameSite: "lax",
+		expires: new Date(authTokenExpiry),
 	});
 }
 
@@ -48,6 +40,5 @@ export async function getUserId(): Promise<string | undefined> {
 export async function deleteAuthTokenCookie(): Promise<boolean> {
 	(await cookies()).delete(AUTH_TOKEN_COOKIE);
 	(await cookies()).delete(USER_ID_COOKIE);
-	(await cookies()).delete(AUTH_TOKEN_COOKIE_EXPIRY);
 	return true;
 }

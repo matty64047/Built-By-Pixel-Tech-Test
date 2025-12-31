@@ -5,7 +5,7 @@ import {
 	type GetUserQuery,
 	type GetUserQueryVariables,
 } from "@/graphql/generated";
-import { getApolloClient } from "@/lib/apollo/client";
+import { getApolloClient } from "@/graphql/client";
 import { getUserId } from "./utils";
 
 export interface User {
