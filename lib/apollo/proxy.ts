@@ -10,7 +10,7 @@ export async function updateSession(request: NextRequest) {
 	const user_id = request.cookies.get(USER_ID_COOKIE)?.value;
 
 	if (
-    request.nextUrl.pathname !== "/tasks" &&
+		request.nextUrl.pathname !== "/tasks" &&
 		request.nextUrl.pathname !== "/" &&
 		!token &&
 		!request.nextUrl.pathname.startsWith("/auth")

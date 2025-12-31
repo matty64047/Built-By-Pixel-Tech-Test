@@ -39,7 +39,9 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 
 	const filteredTasks = tasks
 		.filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
-		.sort((a, b) => (sortAZ ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)));
+		.sort((a, b) =>
+			sortAZ ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title),
+		);
 
 	return (
 		<Sidebar
@@ -112,7 +114,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 						<SidebarGroupContent>
 							{loading
 								? // Skeleton placeholders
-								  Array.from({ length: 10 }).map((_, i) => (
+									Array.from({ length: 10 }).map((_, i) => (
 										<div
 											key={i}
 											className="animate-pulse flex flex-col gap-2 border-b p-4 last:border-b-0"
@@ -121,7 +123,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 											<div className="h-3 w-1/4 rounded bg-gray-200 dark:bg-gray-700"></div>
 											<div className="h-3 w-full rounded bg-gray-200 dark:bg-gray-700"></div>
 										</div>
-								  ))
+									))
 								: filteredTasks.map((task) => (
 										<Link
 											href={`?task_id=${task._id}`}
@@ -131,14 +133,16 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 										>
 											<div className="flex w-full items-center gap-2">
 												<span>{task.title}</span>{" "}
-												<span className="ml-auto text-xs">{task.time_left}</span>
+												<span className="ml-auto text-xs">
+													{task.time_left}
+												</span>
 											</div>
 											<span className="font-medium">{task.status}</span>
 											<span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
 												{task.description}
 											</span>
 										</Link>
-								  ))}
+									))}
 						</SidebarGroupContent>
 					</SidebarGroup>
 				</SidebarContent>
