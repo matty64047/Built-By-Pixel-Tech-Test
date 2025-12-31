@@ -3,7 +3,6 @@
 import { deleteAuthTokenCookie } from "@/actions/utils";
 
 export async function logoutAction() {
-	deleteAuthTokenCookie();
-
+	await deleteAuthTokenCookie();
 	return { success: true };
 }

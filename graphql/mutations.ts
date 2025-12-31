@@ -10,9 +10,19 @@ export const LOGIN_MUTATION = gql`
       }
       unReadMessages
       user {
+        _id
         token
         tokenExpiry
       }
+    }
+  }
+`;
+
+export const CREATE_USER_MUTATION = gql`
+  mutation CreateUser($record: CreateOneUserInput!) {
+    createUser(record: $record) {
+      token
+      tokenExpiry
     }
   }
 `;

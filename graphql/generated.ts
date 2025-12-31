@@ -4871,9 +4871,141 @@ export type LoginMutation = {
 		} | null> | null;
 		user?: {
 			__typename?: "User";
+			_id: any;
 			token?: string | null;
 			tokenExpiry?: any | null;
 		} | null;
+	} | null;
+};
+
+export type CreateUserMutationVariables = Exact<{
+	record: CreateOneUserInput;
+}>;
+
+export type CreateUserMutation = {
+	__typename?: "Mutation";
+	createUser?: {
+		__typename?: "User";
+		token?: string | null;
+		tokenExpiry?: any | null;
+	} | null;
+};
+
+export type TaskListQueryVariables = Exact<{ [key: string]: never }>;
+
+export type TaskListQuery = {
+	__typename?: "Query";
+	taskList: Array<{
+		__typename?: "Task";
+		title: string;
+		is_active?: boolean | null;
+		is_suspended?: boolean | null;
+		xxx?: boolean | null;
+		reminders?: any | null;
+		suspended_reason?: string | null;
+		type?: EnumTaskType | null;
+		visible_from?: any | null;
+		start_date?: any | null;
+		end_date?: any | null;
+		distance?: any | null;
+		is_remote?: boolean | null;
+		images?: any | null;
+		status?: EnumTaskStatus | null;
+		payment_terms_accepted?: Array<EnumTaskPayment_Terms_Accepted | null> | null;
+		description?: string | null;
+		number_of_offers?: number | null;
+		number_of_likes?: number | null;
+		accepted_offer_id?: any | null;
+		_id: any;
+		updatedAt?: any | null;
+		createdAt?: any | null;
+		time_left?: string | null;
+		human_friendly_end_date?: string | null;
+	}>;
+};
+
+export type GetUserTaskListQueryVariables = Exact<{
+	userId?: InputMaybe<Scalars["ID"]["input"]>;
+}>;
+
+export type GetUserTaskListQuery = {
+	__typename?: "Query";
+	getUserTasks?: Array<{
+		__typename?: "Task";
+		title: string;
+		is_active?: boolean | null;
+		is_suspended?: boolean | null;
+		xxx?: boolean | null;
+		reminders?: any | null;
+		suspended_reason?: string | null;
+		type?: EnumTaskType | null;
+		visible_from?: any | null;
+		start_date?: any | null;
+		end_date?: any | null;
+		distance?: any | null;
+		is_remote?: boolean | null;
+		images?: any | null;
+		status?: EnumTaskStatus | null;
+		payment_terms_accepted?: Array<EnumTaskPayment_Terms_Accepted | null> | null;
+		description?: string | null;
+		number_of_offers?: number | null;
+		number_of_likes?: number | null;
+		accepted_offer_id?: any | null;
+		_id: any;
+		updatedAt?: any | null;
+		createdAt?: any | null;
+		time_left?: string | null;
+		human_friendly_end_date?: string | null;
+	} | null> | null;
+};
+
+export type TaskGetQueryVariables = Exact<{
+	filter?: InputMaybe<FilterFindOneTaskInput>;
+}>;
+
+export type TaskGetQuery = {
+	__typename?: "Query";
+	taskGet?: {
+		__typename?: "Task";
+		title: string;
+		is_active?: boolean | null;
+		is_suspended?: boolean | null;
+		xxx?: boolean | null;
+		reminders?: any | null;
+		suspended_reason?: string | null;
+		type?: EnumTaskType | null;
+		visible_from?: any | null;
+		start_date?: any | null;
+		end_date?: any | null;
+		distance?: any | null;
+		is_remote?: boolean | null;
+		images?: any | null;
+		status?: EnumTaskStatus | null;
+		payment_terms_accepted?: Array<EnumTaskPayment_Terms_Accepted | null> | null;
+		description?: string | null;
+		number_of_offers?: number | null;
+		number_of_likes?: number | null;
+		accepted_offer_id?: any | null;
+		_id: any;
+		updatedAt?: any | null;
+		createdAt?: any | null;
+		time_left?: string | null;
+		human_friendly_end_date?: string | null;
+	} | null;
+};
+
+export type GetUserQueryVariables = Exact<{
+	filter?: InputMaybe<FilterFindOneUserInput>;
+}>;
+
+export type GetUserQuery = {
+	__typename?: "Query";
+	getUser?: {
+		__typename?: "User";
+		_id: any;
+		email: string;
+		first_name: string;
+		last_name: string;
 	} | null;
 };
 
@@ -4887,6 +5019,7 @@ export const LoginDocument = gql`
     }
     unReadMessages
     user {
+      _id
       token
       tokenExpiry
     }
@@ -4901,4 +5034,138 @@ export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<
 	LoginMutation,
 	LoginMutationVariables
+>;
+export const CreateUserDocument = gql`
+    mutation CreateUser($record: CreateOneUserInput!) {
+  createUser(record: $record) {
+    token
+    tokenExpiry
+  }
+}
+    `;
+export type CreateUserMutationFn = Apollo.MutationFunction<
+	CreateUserMutation,
+	CreateUserMutationVariables
+>;
+export type CreateUserMutationResult =
+	Apollo.MutationResult<CreateUserMutation>;
+export type CreateUserMutationOptions = Apollo.BaseMutationOptions<
+	CreateUserMutation,
+	CreateUserMutationVariables
+>;
+export const TaskListDocument = gql`
+    query TaskList {
+  taskList {
+    title
+    is_active
+    is_suspended
+    xxx
+    reminders
+    suspended_reason
+    type
+    visible_from
+    start_date
+    end_date
+    distance
+    is_remote
+    images
+    status
+    payment_terms_accepted
+    description
+    number_of_offers
+    number_of_likes
+    accepted_offer_id
+    _id
+    updatedAt
+    createdAt
+    time_left
+    human_friendly_end_date
+  }
+}
+    `;
+export type TaskListQueryResult = Apollo.QueryResult<
+	TaskListQuery,
+	TaskListQueryVariables
+>;
+export const GetUserTaskListDocument = gql`
+    query GetUserTaskList($userId: ID) {
+  getUserTasks(user_id: $userId) {
+    title
+    is_active
+    is_suspended
+    xxx
+    reminders
+    suspended_reason
+    type
+    visible_from
+    start_date
+    end_date
+    distance
+    is_remote
+    images
+    status
+    payment_terms_accepted
+    description
+    number_of_offers
+    number_of_likes
+    accepted_offer_id
+    _id
+    updatedAt
+    createdAt
+    time_left
+    human_friendly_end_date
+  }
+}
+    `;
+export type GetUserTaskListQueryResult = Apollo.QueryResult<
+	GetUserTaskListQuery,
+	GetUserTaskListQueryVariables
+>;
+export const TaskGetDocument = gql`
+    query TaskGet($filter: FilterFindOneTaskInput) {
+  taskGet(filter: $filter) {
+    title
+    is_active
+    is_suspended
+    xxx
+    reminders
+    suspended_reason
+    type
+    visible_from
+    start_date
+    end_date
+    distance
+    is_remote
+    images
+    status
+    payment_terms_accepted
+    description
+    number_of_offers
+    number_of_likes
+    accepted_offer_id
+    _id
+    updatedAt
+    createdAt
+    time_left
+    human_friendly_end_date
+  }
+}
+    `;
+export type TaskGetQueryResult = Apollo.QueryResult<
+	TaskGetQuery,
+	TaskGetQueryVariables
+>;
+export const GetUserDocument = gql`
+    query GetUser($filter: FilterFindOneUserInput) {
+  getUser(filter: $filter) {
+    _id
+    email
+    first_name
+    last_name
+  }
+}
+    `;
+export type GetUserQueryResult = Apollo.QueryResult<
+	GetUserQuery,
+	GetUserQueryVariables
 >;
