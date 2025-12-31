@@ -9,9 +9,9 @@ import { getApolloClient } from "@/lib/apollo/client";
 import { getUserId } from "./utils";
 
 export interface User {
-	email: string;
-	first_name: string;
-	last_name: string;
+	email?: string;
+	first_name?: string;
+	last_name?: string;
 }
 
 export async function getUser(): Promise<User> {
@@ -28,8 +28,8 @@ export async function getUser(): Promise<User> {
 	});
 
 	return {
-		email: data?.getUser?.email || "",
-		first_name: data?.getUser?.email || "",
-		last_name: data?.getUser?.email || "",
+		email: data?.getUser?.email,
+		first_name: data?.getUser?.first_name,
+		last_name: data?.getUser?.last_name,
 	};
 }
