@@ -66,10 +66,15 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 			setUserTasks(userTasks);
 			setLoading(false);
 			if (!user) setActiveList(tasks);
-			if (!currentTaskId && filteredTasks.length > 0)
-				router.push(`?task_id=${filteredTasks[0]._id}`);
 		});
-	}, [router, currentTaskId, filteredTasks]);
+	}, []);
+
+	useEffect(() => {
+		if (!currentTaskId && tasks.length > 0) {
+			const firstTask = filteredTasks.length > 0 ? filteredTasks[0] : tasks[0];
+			if (firstTask) router.push(`?task_id=${firstTask._id}`);
+		}
+	}, [currentTaskId, tasks, filteredTasks, router.push]);
 
 	// Unique statuses for the active list
 	const uniqueStatuses = Array.from(
