@@ -1,10 +1,20 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 "use client";
 
-import { ArrowDown, ArrowUp, Command } from "lucide-react";
+import {
+	AArrowDown,
+	AArrowUp,
+	Command,
+	Globe,
+	Inbox,
+	User,
+} from "lucide-react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { type ComponentProps, useEffect, useState } from "react";
 import { getTasksAction } from "@/actions/get-tasks";
+import type { User as UserType } from "@/actions/get-user";
 import { NavUser } from "@/components/nav-user";
-import { Label } from "@/components/ui/label";
 import {
 	Sidebar,
 	SidebarContent,
@@ -17,27 +27,38 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Switch } from "@/components/ui/switch";
-import { type ComponentProps, useEffect, useState } from "react";
+import type {
+	GetUserTaskListQueryResult,
+	TaskListQueryResult,
+} from "@/graphql/generated";
 
 interface AppSidebarProps extends ComponentProps<typeof Sidebar> {}
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
-	const [tasks, setTasks] = useState<any[]>([]);
-	const [user, setUser] = useState<any | null>(null);
+	const [tasks, setTasks] = useState<TaskListQueryResult[]>([]);
+	const [userTasks, setUserTasks] = useState<GetUserTaskListQueryResult[]>([]);
+	const [user, setUser] = useState<UserType | undefined>(undefined);
+	const [activeList, setActiveList] = useState(tasks);
 	const [search, setSearch] = useState("");
 	const [sortAZ, setSortAZ] = useState(true);
 	const [loading, setLoading] = useState(true);
+
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const taskId = searchParams.get("task_id");
 
 	useEffect(() => {
 		getTasksAction().then(({ user, tasks, userTasks }) => {
 			setUser(user);
 			setTasks(tasks);
+			setUserTasks(userTasks);
 			setLoading(false);
+			if (!user) setActiveList(tasks);
+			if (!taskId) router.push(`?task_id=${tasks[0]._id}`);
 		});
-	}, []);
+	}, [router, taskId]);
 
-	const filteredTasks = tasks
+	const filteredTasks = activeList
 		.filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
 		.sort((a, b) =>
 			sortAZ ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title),
@@ -71,15 +92,52 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 						</SidebarMenuItem>
 					</SidebarMenu>
 				</SidebarHeader>
-				<SidebarContent>
-					<SidebarGroup>
-						<SidebarGroupContent className="px-1.5 md:px-0"></SidebarGroupContent>
-					</SidebarGroup>
-				</SidebarContent>
 				{user && (
-					<SidebarFooter>
-						<NavUser user={user} />
-					</SidebarFooter>
+					<>
+						<SidebarContent>
+							<SidebarGroup>
+								<SidebarGroupContent className="px-1.5 md:px-0">
+									<SidebarMenu>
+										<SidebarMenuItem>
+											<SidebarMenuButton
+												tooltip={{
+													children: "User Tasks",
+													hidden: false,
+												}}
+												onClick={() => {
+													setActiveList(userTasks);
+												}}
+												isActive={activeList === userTasks}
+												className="px-2.5 md:px-2"
+											>
+												<User />
+												<span>User Tasks</span>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+										<SidebarMenuItem>
+											<SidebarMenuButton
+												tooltip={{
+													children: "Public Tasks",
+													hidden: false,
+												}}
+												onClick={() => {
+													setActiveList(tasks);
+												}}
+												isActive={activeList === tasks}
+												className="px-2.5 md:px-2"
+											>
+												<Globe />
+												<span>Public Tasks</span>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									</SidebarMenu>
+								</SidebarGroupContent>
+							</SidebarGroup>
+						</SidebarContent>
+						<SidebarFooter>
+							<NavUser user={user} />
+						</SidebarFooter>
+					</>
 				)}
 			</Sidebar>
 
@@ -89,17 +147,12 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 					<div className="flex w-full items-center justify-between">
 						<div className="text-base font-medium text-foreground"></div>
 						<div className="flex items-center gap-4">
-							<Label className="flex items-center gap-2 text-sm">
-								<span>Unreads</span>
-								<Switch className="shadow-none" />
-							</Label>
 							<button
 								type="button"
 								className="flex items-center gap-1 text-sm text-foreground hover:text-foreground/80"
 								onClick={() => setSortAZ(!sortAZ)}
 							>
-								Sort {sortAZ ? "A-Z" : "Z-A"}{" "}
-								{sortAZ ? <ArrowDown size={14} /> : <ArrowUp size={14} />}
+								{sortAZ ? <AArrowUp /> : <AArrowDown />}
 							</button>
 						</div>
 					</div>
@@ -112,37 +165,41 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 				<SidebarContent>
 					<SidebarGroup className="px-0">
 						<SidebarGroupContent>
-							{loading
-								? // Skeleton placeholders
-									Array.from({ length: 10 }).map((_, i) => (
-										<div
-											key={i}
-											className="animate-pulse flex flex-col gap-2 border-b p-4 last:border-b-0"
-										>
-											<div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700"></div>
-											<div className="h-3 w-1/4 rounded bg-gray-200 dark:bg-gray-700"></div>
-											<div className="h-3 w-full rounded bg-gray-200 dark:bg-gray-700"></div>
+							{loading ? (
+								// Skeleton placeholders
+								Array.from({ length: 10 }).map((_, i) => (
+									<div
+										key={i}
+										className="animate-pulse flex flex-col gap-2 border-b p-4 last:border-b-0"
+									>
+										<div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
+										<div className="h-3 w-1/4 rounded bg-gray-200 dark:bg-gray-700" />
+										<div className="h-3 w-full rounded bg-gray-200 dark:bg-gray-700" />
+									</div>
+								))
+							) : filteredTasks.length === 0 ? (
+								<div className="flex flex-col items-center justify-center gap-2 p-6 text-sm text-muted-foreground">
+									<Inbox className="h-5 w-5" />
+									<span>There are no tasks</span>
+								</div>
+							) : (
+								filteredTasks.map((task) => (
+									<Link
+										href={`?task_id=${task._id}`}
+										key={task._id}
+										className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight whitespace-nowrap last:border-b-0"
+									>
+										<div className="flex w-full items-center gap-2">
+											<span>{task.title}</span>
+											<span className="ml-auto text-xs">{task.time_left}</span>
 										</div>
-									))
-								: filteredTasks.map((task) => (
-										<Link
-											href={`?task_id=${task._id}`}
-											key={task._id}
-											className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-											shallow
-										>
-											<div className="flex w-full items-center gap-2">
-												<span>{task.title}</span>{" "}
-												<span className="ml-auto text-xs">
-													{task.time_left}
-												</span>
-											</div>
-											<span className="font-medium">{task.status}</span>
-											<span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
-												{task.description}
-											</span>
-										</Link>
-									))}
+										<span className="font-medium">{task.status}</span>
+										<span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
+											{task.description}
+										</span>
+									</Link>
+								))
+							)}
 						</SidebarGroupContent>
 					</SidebarGroup>
 				</SidebarContent>

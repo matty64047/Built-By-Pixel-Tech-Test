@@ -15,7 +15,7 @@ export const getApolloClient = async (): Promise<ApolloClient> => {
 	const token = await getAuthToken();
 
 	const httpLink = new HttpLink({
-		uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
+		uri: process.env.GRAPHQL_ENDPOINT,
 		fetch,
 	});
 

@@ -4,7 +4,7 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 const config: CodegenConfig = {
 	overwrite: true,
 
-	schema: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
+	schema: process.env.GRAPHQL_ENDPOINT,
 
 	documents: "graphql/**/*.ts",
 
@@ -17,6 +17,9 @@ const config: CodegenConfig = {
 			],
 			config: {
 				withHooks: false,
+				withMutationFn: true,
+				addDocBlocks: true,
+				skipTypename: false,
 			},
 		},
 	},

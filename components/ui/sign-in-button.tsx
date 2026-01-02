@@ -1,26 +1,29 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { getUserId } from "@/actions/utils";
-import { Button, type ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
-interface SignInButtonProps extends ButtonProps {}
-
-async function SignInButtonInner(props: SignInButtonProps) {
+async function SignInButtonInner() {
 	const userId = await getUserId();
 
 	if (userId) return null;
 
 	return (
-		<Link className="ml-auto" href="/auth/login">
-			<Button {...props}>Sign In</Button>
-		</Link>
+		<div className="flex gap-2">
+			<Link href="/auth/sign-up">
+				<Button variant="secondary">Sign Up</Button>
+			</Link>
+			<Link href="/auth/login">
+				<Button>Sign In</Button>
+			</Link>
+		</div>
 	);
 }
 
-export function SignInButton(props: SignInButtonProps) {
+export function SignInButton() {
 	return (
 		<Suspense fallback={null}>
-			<SignInButtonInner {...props} />
+			<SignInButtonInner />
 		</Suspense>
 	);
 }

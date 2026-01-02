@@ -19,12 +19,23 @@ export async function getAuthToken(): Promise<string | undefined> {
 	return (await cookies()).get(AUTH_TOKEN_COOKIE)?.value;
 }
 
-export async function getUserId() {
+export async function getUserId(): Promise<string | null> {
 	const token = await getAuthToken();
-	if (token) {
+	if (!token) return null;
+
+	try {
 		const decoded = jwt.decode(token);
-		return decoded.data._id;
+		if (decoded && typeof decoded === "object" && "data" in decoded) {
+			const data = (decoded as any).data;
+			if (data && typeof data === "object" && "_id" in data) {
+				return data._id as string;
+			}
+		}
+	} catch (err) {
+		console.error("Failed to decode JWT:", err);
 	}
+
+	return null;
 }
 
 export async function deleteAuthTokenCookie() {

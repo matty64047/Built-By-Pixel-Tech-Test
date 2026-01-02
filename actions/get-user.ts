@@ -1,12 +1,12 @@
 "use server";
 
+import { getUserId } from "@/actions/utils";
 import { getApolloClient } from "@/graphql/client";
 import {
 	GetUserDocument,
 	type GetUserQuery,
 	type GetUserQueryVariables,
 } from "@/graphql/generated";
-import { getUserId } from "@/actions/utils";
 
 export interface User {
 	email?: string;
