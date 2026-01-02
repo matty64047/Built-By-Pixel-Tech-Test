@@ -3,7 +3,7 @@
 import { AArrowDown, AArrowUp, Globe, Inbox, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, type ComponentProps } from "react";
+import { type ComponentProps, useEffect, useState } from "react";
 import { getTasksAction } from "@/actions/get-tasks";
 import type { User as UserType } from "@/actions/get-user";
 import { NavUser } from "@/components/nav-user";
@@ -23,8 +23,8 @@ import type {
 	GetUserTaskListQueryResult,
 	TaskListQueryResult,
 } from "@/graphql/generated";
-import { Badge } from "./ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "./ui/badge";
 
 interface AppSidebarProps extends ComponentProps<typeof Sidebar> {}
 
