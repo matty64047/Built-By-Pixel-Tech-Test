@@ -2,7 +2,6 @@
 
 import { ArrowDown, ArrowUp, Command } from "lucide-react";
 import Link from "next/link";
-import * as React from "react";
 import { getTasksAction } from "@/actions/get-tasks";
 import { NavUser } from "@/components/nav-user";
 import { Label } from "@/components/ui/label";
@@ -19,18 +18,19 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
+import { type ComponentProps, useEffect, useState } from "react";
 
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {}
+interface AppSidebarProps extends ComponentProps<typeof Sidebar> {}
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
-	const [tasks, setTasks] = React.useState<any[]>([]);
-	const [user, setUser] = React.useState<any | null>(null);
-	const [search, setSearch] = React.useState("");
-	const [sortAZ, setSortAZ] = React.useState(true);
-	const [loading, setLoading] = React.useState(true);
+	const [tasks, setTasks] = useState<any[]>([]);
+	const [user, setUser] = useState<any | null>(null);
+	const [search, setSearch] = useState("");
+	const [sortAZ, setSortAZ] = useState(true);
+	const [loading, setLoading] = useState(true);
 
-	React.useEffect(() => {
-		getTasksAction().then(({ user, tasks }) => {
+	useEffect(() => {
+		getTasksAction().then(({ user, tasks, userTasks }) => {
 			setUser(user);
 			setTasks(tasks);
 			setLoading(false);

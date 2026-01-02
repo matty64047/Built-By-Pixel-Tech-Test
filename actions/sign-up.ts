@@ -3,8 +3,8 @@
 import { getApolloClient } from "@/graphql/client";
 import {
 	CreateUserDocument,
-	CreateUserMutation,
-	CreateUserMutationVariables,
+	type CreateUserMutation,
+	type CreateUserMutationVariables,
 } from "@/graphql/generated";
 
 export default async function signUpAction(

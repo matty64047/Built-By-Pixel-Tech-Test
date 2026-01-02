@@ -1,23 +1,10 @@
+import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
 export const AUTH_TOKEN_COOKIE = "auth_token";
-export const USER_ID_COOKIE = "user_id";
-export const AUTH_TOKEN_COOKIE_EXPIRY = "auth_token_expiry";
 const SECURE = process.env.NODE_ENV === "production";
 
-export async function setAuthTokenCookie(
-	userId: string,
-	authToken: string,
-	authTokenExpiry: string,
-) {
-	(await cookies()).set({
-		name: USER_ID_COOKIE,
-		value: userId,
-		path: "/",
-		httpOnly: true,
-		secure: SECURE,
-		sameSite: "lax",
-	});
+export async function setAuthTokenCookie(authToken: string) {
 	(await cookies()).set({
 		name: AUTH_TOKEN_COOKIE,
 		value: authToken,
@@ -25,7 +12,6 @@ export async function setAuthTokenCookie(
 		httpOnly: true,
 		secure: SECURE,
 		sameSite: "lax",
-		expires: new Date(authTokenExpiry),
 	});
 }
 
@@ -33,12 +19,14 @@ export async function getAuthToken(): Promise<string | undefined> {
 	return (await cookies()).get(AUTH_TOKEN_COOKIE)?.value;
 }
 
-export async function getUserId(): Promise<string | undefined> {
-	return (await cookies()).get(USER_ID_COOKIE)?.value;
+export async function getUserId() {
+	const token = await getAuthToken();
+	if (token) {
+		const decoded = jwt.decode(token);
+		return decoded.data._id;
+	}
 }
 
-export async function deleteAuthTokenCookie(): Promise<boolean> {
+export async function deleteAuthTokenCookie() {
 	(await cookies()).delete(AUTH_TOKEN_COOKIE);
-	(await cookies()).delete(USER_ID_COOKIE);
-	return true;
 }

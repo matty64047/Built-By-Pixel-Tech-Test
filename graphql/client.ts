@@ -19,12 +19,11 @@ export const getApolloClient = async (): Promise<ApolloClient> => {
 		fetch,
 	});
 
-	// Add auth token to headers
 	const authLink = new ApolloLink((operation, forward) => {
 		operation.setContext(({ headers = {} }) => ({
 			headers: {
 				...headers,
-				Authorization: token ? token : "",
+				Authorization: token,
 			},
 		}));
 		return forward(operation);

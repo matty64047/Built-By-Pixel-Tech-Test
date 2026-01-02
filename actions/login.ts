@@ -1,12 +1,12 @@
 "use server";
 
 import { setAuthTokenCookie } from "@/actions/utils";
+import { getApolloClient } from "@/graphql/client";
 import {
 	LoginDocument,
 	type LoginMutation,
 	type LoginMutationVariables,
 } from "@/graphql/generated";
-import { getApolloClient } from "@/graphql/client";
 
 export async function loginAction(
 	email: string,
@@ -19,16 +19,11 @@ export async function loginAction(
 		variables: { email, password },
 	});
 
-	// Make sure login and user exist
 	const login = data?.login;
 	if (!login || !login.user || !login.user.token)
 		throw new Error("User does not exist");
 
-	await setAuthTokenCookie(
-		login.user._id,
-		login.user.token,
-		login.user.tokenExpiry,
-	);
+	await setAuthTokenCookie(login.user.token);
 
 	return true;
 }

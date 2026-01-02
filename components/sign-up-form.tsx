@@ -22,6 +22,9 @@ export function SignUpForm({
 }: React.ComponentPropsWithoutRef<"div">) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [username, setUsername] = useState("");
 	const [repeatPassword, setRepeatPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +42,7 @@ export function SignUpForm({
 		}
 
 		try {
-			await signUpAction(email, password, "test", "test", "test");
+			await signUpAction(email, password, firstName, lastName, username);
 			if (error) throw error;
 			router.push("/auth/sign-up-success");
 		} catch (error: unknown) {
@@ -68,6 +71,33 @@ export function SignUpForm({
 									required
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
+								/>
+							</div>
+							<div className="grid gap-2">
+								<Label htmlFor="first_name">First Name</Label>
+								<Input
+									id="first_name"
+									required
+									value={firstName}
+									onChange={(e) => setFirstName(e.target.value)}
+								/>
+							</div>
+							<div className="grid gap-2">
+								<Label htmlFor="last_name">Last Name</Label>
+								<Input
+									id="last_name"
+									required
+									value={lastName}
+									onChange={(e) => setLastName(e.target.value)}
+								/>
+							</div>
+							<div className="grid gap-2">
+								<Label htmlFor="username">Username</Label>
+								<Input
+									id="username"
+									required
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
 								/>
 							</div>
 							<div className="grid gap-2">
