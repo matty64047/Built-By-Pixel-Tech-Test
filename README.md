@@ -28,12 +28,6 @@ A **Next.js** application for managing user tasks and public tasks, powered by a
 
 ---
 
-## Demo
-
-> Add a link or screenshot of the app here once deployed.
-
----
-
 ## Prerequisites
 
 Make sure you have the following installed on your machine:
