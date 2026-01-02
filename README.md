@@ -49,8 +49,8 @@ Make sure you have the following installed on your machine:
 1. **Clone the repository**  
 
 ```bash
-git clone https://github.com/yourusername/task-app.git
-cd task-app
+git clone https://github.com/matty64047/Built-By-Pixel-Tech-Test.git
+cd Built-By-Pixel-Tech-Test
 ````
 
 2. **Install dependencies**
@@ -116,12 +116,11 @@ yarn start
 ```
 .
 ├── app/                # Next.js app directory
-├── components/         # React components
+├── components/         # Shadcn components
 ├── graphql/            # GraphQL queries & mutations
-├── actions/            # GraphQL queries & mutations
-├── hooks/              # GraphQL queries & mutations
-├── lib/                # GraphQL queries & mutations
-├── graphql/            # GraphQL queries & mutations
+├── actions/            # Server actions
+├── hooks/              # Hooks
+├── lib/                # Helper functions
 ├── .env                # Environment variables
 └── package.json
 ```
