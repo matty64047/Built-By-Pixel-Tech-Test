@@ -18,6 +18,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from "@/components/ui/sidebar";
 import type {
 	GetUserTaskListQueryResult,
@@ -39,6 +40,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 	const [loading, setLoading] = useState(true);
 
 	const router = useRouter();
+	const sidebar = useSidebar();
 	const searchParams = useSearchParams();
 	const currentTaskId = searchParams.get("task_id");
 	const isMobile = useIsMobile();
@@ -95,6 +97,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 		return filteredTasks.map((task) => (
 			<Link
 				href={`?task_id=${task._id}`}
+				onClick={() => isMobile && sidebar.toggleSidebar()}
 				key={task._id}
 				className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight whitespace-nowrap last:border-b-0"
 			>
@@ -154,7 +157,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 								value={search}
 								onChange={(e) => setSearch(e.target.value)}
 							/>
-							{renderStatusFilters()}
 						</SidebarMenuItem>
 					)}
 				</SidebarHeader>
