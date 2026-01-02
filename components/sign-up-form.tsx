@@ -42,7 +42,14 @@ export function SignUpForm({
 		}
 
 		try {
-			await signUpAction(firstName, lastName, email, password, username);
+			const { error } = await signUpAction(
+				firstName,
+				lastName,
+				email,
+				password,
+				username,
+			);
+			if (error) throw new Error(error);
 			router.push("/auth/sign-up-success");
 		} catch (error: unknown) {
 			setError(error instanceof Error ? error.message : "An error occurred");

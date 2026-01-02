@@ -8,22 +8,33 @@ import {
 	type LoginMutationVariables,
 } from "@/graphql/generated";
 
-export async function loginAction(
-	email: string,
-	password: string,
-): Promise<boolean> {
-	const client = await getApolloClient();
+export async function loginAction(email: string, password: string) {
+	const response = {
+		success: true,
+		error: undefined,
+	};
 
-	const { data } = await client.mutate<LoginMutation, LoginMutationVariables>({
-		mutation: LoginDocument,
-		variables: { email, password },
-	});
+	try {
+		const client = await getApolloClient();
 
-	const login = data?.login;
-	if (!login || !login.user || !login.user.token)
-		throw new Error("User does not exist");
+		const { data } = await client.mutate<LoginMutation, LoginMutationVariables>(
+			{
+				mutation: LoginDocument,
+				variables: { email, password },
+			},
+		);
 
-	await setAuthTokenCookie(login.user.token);
+		const login = data?.login;
+		if (!login || !login.user || !login.user.token)
+			throw new Error("User does not exist");
 
-	return true;
+		await setAuthTokenCookie(login.user.token);
+	} catch (error: any) {
+		// Return only the GraphQL error message
+		const message =
+			error?.graphQLErrors?.[0]?.message || error?.message || "Unknown error";
+		response.success = false;
+		response.error = message;
+	}
+	return response;
 }

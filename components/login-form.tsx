@@ -32,7 +32,8 @@ export function LoginForm({
 		setError(null);
 
 		try {
-			await loginAction(email, password);
+			const { error } = await loginAction(email, password);
+			if (error) throw new Error(error);
 			router.push("/tasks");
 		} catch (err: unknown) {
 			setError(err instanceof Error ? err.message : "An error occurred");
