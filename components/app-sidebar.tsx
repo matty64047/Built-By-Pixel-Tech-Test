@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 "use client";
 
 import {
@@ -31,6 +30,7 @@ import type {
 	GetUserTaskListQueryResult,
 	TaskListQueryResult,
 } from "@/graphql/generated";
+import { Badge } from "./ui/badge";
 
 interface AppSidebarProps extends ComponentProps<typeof Sidebar> {}
 
@@ -42,10 +42,22 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 	const [search, setSearch] = useState("");
 	const [sortAZ, setSortAZ] = useState(true);
 	const [loading, setLoading] = useState(true);
+	const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const taskId = searchParams.get("task_id");
+	const currentTaskId = searchParams.get("task_id");
+
+	// Filter by search and status
+	const filteredTasks = activeList
+		.filter(
+			(task) =>
+				task.title.toLowerCase().includes(search.toLowerCase()) &&
+				(!statusFilter || task.status === statusFilter),
+		)
+		.sort((a, b) =>
+			sortAZ ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title),
+		);
 
 	useEffect(() => {
 		getTasksAction().then(({ user, tasks, userTasks }) => {
@@ -54,15 +66,15 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 			setUserTasks(userTasks);
 			setLoading(false);
 			if (!user) setActiveList(tasks);
-			if (!taskId) router.push(`?task_id=${tasks[0]._id}`);
+			if (!currentTaskId && filteredTasks.length > 0)
+				router.push(`?task_id=${filteredTasks[0]._id}`);
 		});
-	}, [router, taskId]);
+	}, [router, currentTaskId, filteredTasks]);
 
-	const filteredTasks = activeList
-		.filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
-		.sort((a, b) =>
-			sortAZ ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title),
-		);
+	// Unique statuses for the active list
+	const uniqueStatuses = Array.from(
+		new Set(activeList.map((task) => task.status)),
+	);
 
 	return (
 		<Sidebar
@@ -92,58 +104,48 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 						</SidebarMenuItem>
 					</SidebarMenu>
 				</SidebarHeader>
+				<SidebarContent>
+					<SidebarGroup>
+						<SidebarGroupContent className="px-1.5 md:px-0">
+							<SidebarMenu>
+								{user && (
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											tooltip={{ children: "User Tasks", hidden: false }}
+											onClick={() => setActiveList(userTasks)}
+											isActive={activeList === userTasks}
+											className="px-2.5 md:px-2"
+										>
+											<User />
+											<span>User Tasks</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								)}
+								<SidebarMenuItem>
+									<SidebarMenuButton
+										tooltip={{ children: "Public Tasks", hidden: false }}
+										onClick={() => setActiveList(tasks)}
+										isActive={activeList === tasks}
+										className="px-2.5 md:px-2"
+									>
+										<Globe />
+										<span>Public Tasks</span>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				</SidebarContent>
 				{user && (
-					<>
-						<SidebarContent>
-							<SidebarGroup>
-								<SidebarGroupContent className="px-1.5 md:px-0">
-									<SidebarMenu>
-										<SidebarMenuItem>
-											<SidebarMenuButton
-												tooltip={{
-													children: "User Tasks",
-													hidden: false,
-												}}
-												onClick={() => {
-													setActiveList(userTasks);
-												}}
-												isActive={activeList === userTasks}
-												className="px-2.5 md:px-2"
-											>
-												<User />
-												<span>User Tasks</span>
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-										<SidebarMenuItem>
-											<SidebarMenuButton
-												tooltip={{
-													children: "Public Tasks",
-													hidden: false,
-												}}
-												onClick={() => {
-													setActiveList(tasks);
-												}}
-												isActive={activeList === tasks}
-												className="px-2.5 md:px-2"
-											>
-												<Globe />
-												<span>Public Tasks</span>
-											</SidebarMenuButton>
-										</SidebarMenuItem>
-									</SidebarMenu>
-								</SidebarGroupContent>
-							</SidebarGroup>
-						</SidebarContent>
-						<SidebarFooter>
-							<NavUser user={user} />
-						</SidebarFooter>
-					</>
+					<SidebarFooter>
+						<NavUser user={user} />
+					</SidebarFooter>
 				)}
 			</Sidebar>
 
 			{/* Main Sidebar */}
 			<Sidebar collapsible="none" className="hidden flex-1 md:flex">
-				<SidebarHeader className="gap-3.5 border-b p-4">
+				<SidebarHeader className="gap-3.5 border-b p-4 flex-col">
 					<div className="flex w-full items-center justify-between">
 						<div className="text-base font-medium text-foreground"></div>
 						<div className="flex items-center gap-4">
@@ -156,17 +158,44 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 							</button>
 						</div>
 					</div>
+
 					<SidebarInput
 						placeholder="Type to search..."
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
+
+					{/* Status filter chips */}
+					<div className="flex flex-wrap gap-2 mt-2">
+						<div className="flex flex-wrap gap-2 mt-2">
+							<Badge
+								variant={!statusFilter ? "default" : "outline"}
+								className="cursor-pointer"
+								onClick={() => setStatusFilter(null)}
+							>
+								All
+							</Badge>
+							{uniqueStatuses.map((status) => (
+								<Badge
+									key={status}
+									variant={statusFilter === status ? "default" : "outline"}
+									className="cursor-pointer"
+									onClick={() => {
+										router.push(`/tasks/${status}`);
+										setStatusFilter(status);
+									}}
+								>
+									{status}
+								</Badge>
+							))}
+						</div>
+					</div>
 				</SidebarHeader>
+
 				<SidebarContent>
 					<SidebarGroup className="px-0">
 						<SidebarGroupContent>
 							{loading ? (
-								// Skeleton placeholders
 								Array.from({ length: 10 }).map((_, i) => (
 									<div
 										key={i}
